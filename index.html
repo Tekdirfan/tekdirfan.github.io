@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Irfan Tekdir - Quantitative Research</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Animated background particles */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* PyPI Package Card */
+        .pypi-card {
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(0, 188, 212, 0.05));
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pypi-card::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            right: 20px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(100, 255, 218, 0.3), transparent);
+        }
+
+        .pypi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(100, 255, 218, 0.2);
+            border-color: rgba(100, 255, 218, 0.5);
+        }
+
+        .pypi-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .pypi-badge {
+            background: linear-gradient(45deg, #64ffda, #00bcd4);
+            color: #0f0f23;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .pypi-link {
+            color: #64ffda;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .pypi-link:hover {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
+        }
+
+        /* Conference Presentation Card */
+        .conference-card {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.05));
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .conference-card::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            right: 20px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.3), transparent);
+        }
+
+        .conference-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 193, 7, 0.2);
+            border-color: rgba(255, 193, 7, 0.5);
+        }
+
+        .conference-badge {
+            background: linear-gradient(45deg, #ffc107, #ff9800);
+            color: #0f0f23;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .conference-link {
+            color: #ffc107;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .conference-link:hover {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
+        /* Force all links to be clickable */
+        .research-card a {
+            position: relative !important;
+            z-index: 9999 !important;
+            pointer-events: auto !important;
+            display: block !important;
+            background: transparent !important;
+        }
+        
+        .pypi-link {
+            position: relative !important;
+            z-index: 9999 !important;
+            pointer-events: auto !important;
+            display: inline-block !important;
+        }
+
+        /* Remove any cursor conflicts */
+        .research-card {
+            cursor: default !important;
+        }
+
+        /* Ensure CTA buttons are clickable */
+        .cta-buttons a, .btn {
+            position: relative !important;
+            z-index: 9999 !important;
+            pointer-events: auto !important;
+            display: inline-block !important;
+        }
+
+        /* Progress indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(45deg, #64ffda, #00bcd4);
+            z-index: 1001;
+            transition: width 0.3s ease;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 15px 0;
+            transition: all 0.3s ease, transform 0.3s ease;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #64ffda, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #64ffda;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #64ffda, #00bcd4);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 80px;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .profile-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #64ffda;
+            box-shadow: 0 0 30px rgba(100, 255, 218, 0.3);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-photo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(100, 255, 218, 0.5);
+        }
+
+        .hero-contact a:hover {
+            color: #ffffff !important;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-contact {
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 15px !important;
+            }
+        }
+
+        .hero-text h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffffff, #64ffda);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+
+        .hero-text .subtitle {
+            font-size: 1.5rem;
+            color: #a0a0a0;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .hero-text .description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            margin-bottom: 40px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            position: relative;
+            z-index: 50;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            z-index: 100;
+            pointer-events: auto;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #64ffda, #00bcd4);
+            color: #0f0f23;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(100, 255, 218, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #64ffda;
+            border: 2px solid #64ffda;
+        }
+
+        .btn-secondary:hover {
+            background: #64ffda;
+            color: #0f0f23;
+            transform: translateY(-3px);
+        }
+
+        /* Data Visualization */
+        .hero-viz {
+            position: relative;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease-out;
+            position: relative;
+        }
+
+        section.section-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(45deg, #ffffff, #64ffda);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Parallax effects */
+        .parallax-bg {
+            position: absolute;
+            top: -20%;
+            left: 0;
+            width: 100%;
+            height: 120%;
+            background: linear-gradient(45deg, rgba(100, 255, 218, 0.03), rgba(0, 188, 212, 0.02));
+            transform: translateY(0px);
+            transition: transform 0.5s ease-out;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .skill-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(100, 255, 218, 0.1);
+        }
+
+        .skill-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #64ffda;
+        }
+
+        .skill-item {
+            margin-bottom: 15px;
+        }
+
+        .skill-item span {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .skill-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(45deg, #64ffda, #00bcd4);
+            border-radius: 4px;
+            transition: width 2s ease;
+            width: 0;
+        }
+
+        /* Research Section */
+        .research-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .research-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .research-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(45deg, #64ffda, #00bcd4);
+            pointer-events: none !important;
+            z-index: 1;
+        }
+
+        .research-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(100, 255, 218, 0.1);
+        }
+
+        /* Interactive Card Content */
+        .research-card .research-description {
+            max-height: none;
+            overflow: visible;
+        }
+
+        .research-card .research-stats {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .research-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .research-description {
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .research-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #64ffda;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+
+        /* Contact Section */
+        .contact {
+            background: rgba(255, 255, 255, 0.02);
+            text-align: center;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            color: #64ffda;
+            transform: translateY(-3px);
+        }
+
+        /* Scroll Animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s ease-out;
+        }
+
+        .scroll-reveal-left.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scroll-reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s ease-out;
+        }
+
+        .scroll-reveal-right.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scroll-reveal-scale {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.8s ease-out;
+        }
+
+        .scroll-reveal-scale.revealed {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Animation delays */
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+        .stagger-6 { transition-delay: 0.6s; }
+
+        /* Initial hero animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .fade-in-up.stagger-1 { animation-delay: 0.1s; }
+        .fade-in-up.stagger-2 { animation-delay: 0.2s; }
+        .fade-in-up.stagger-3 { animation-delay: 0.3s; }
+        .fade-in-up.stagger-4 { animation-delay: 0.4s; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 3rem;
+            }
+
+            .profile-photo {
+                width: 150px;
+                height: 150px;
+                margin: 0 auto 20px auto;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles-canvas"></canvas>
+    <div class="scroll-progress"></div>
+    
+    
+    <nav>
+        <div class="container">
+            <div class="logo">Irfan Tekdir</div>
+            <ul class="nav-links">
+                <li><a href="#home" onclick="scrollToSection('home'); return false;">Home</a></li>
+                <li><a href="#research" onclick="scrollToSection('research'); return false;">Research</a></li>
+                <li><a href="#skills" onclick="scrollToSection('skills'); return false;">Skills</a></li>
+                <li><a href="#contact" onclick="scrollToSection('contact'); return false;">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section id="home" class="hero section-visible">
+            <div class="parallax-bg"></div>
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <img src="profile_picture-modified.png" alt="Irfan Tekdir" class="profile-photo fade-in-up stagger-1">
+                        <h1 class="fade-in-up stagger-1">Welcome to My Webpage!</h1>
+                        <p class="subtitle fade-in-up stagger-2">PhD Candidate in <strong style="color: #64ffda;">Economics</strong> with joint affiliation in <strong style="color: #64ffda;">Computer Science</strong></p>
+                        <p class="description fade-in-up stagger-3">
+                            I specialize in bridging economic theory with computational methods, applying <span style="color: #64ffda; font-weight: 600;">advanced statistical techniques</span> and <span style="color: #64ffda; font-weight: 600;">data science methodologies</span> to solve complex real-world problems. My expertise spans <span style="color: #64ffda; font-weight: 600;">machine learning</span>, <span style="color: #64ffda; font-weight: 600;">econometric modeling</span>, and <span style="color: #64ffda; font-weight: 600;">algorithmic development</span>. I'm passionate about leveraging my interdisciplinary research background and analytical expertise to drive data-driven insights as an <span style="color: #64ffda; font-weight: 600;">Applied Scientist/Quantitative Researcher</span> in industry.
+                        </p>
+                        <div class="cta-buttons fade-in-up stagger-4">
+                            <a href="https://drive.google.com/file/d/14z0FDyeyGt_MA713b5hABXjdC4ACpq5p/view?usp=share_link" class="btn btn-primary" target="_blank" rel="noopener noreferrer">View CV</a>
+                            <a href="#research" class="btn btn-secondary">View Research</a>
+                        </div>
+                    </div>
+                    <div class="hero-viz fade-in-up stagger-4">
+                        <div class="chart-container">
+                            <canvas id="performanceChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="research">
+            <div class="parallax-bg"></div>
+            <div class="container">
+                <h2 class="section-title scroll-reveal">Research Projects</h2>
+                
+                <!-- Economics Research Section -->
+                <div style="margin-bottom: 80px;">
+                    <h3 class="scroll-reveal stagger-1" style="font-size: 2rem; color: #64ffda; margin-bottom: 30px; text-align: center;">📈 Economics Research</h3>
+                    <div style="display: flex; flex-direction: column; gap: 30px; max-width: 800px; margin: 0 auto;">
+                        <div class="research-card scroll-reveal-scale stagger-2">
+                            <h3 class="research-title">Market Segmentation Under Costly Information Acquisition</h3>
+                            <p class="research-description">
+                                This paper investigates third-degree price discrimination under endogenous market segmentation. Segmenting a market requires access to information about consumers, and this information comes with a cost. I explore the trade-offs between the benefits of segmentation and the costs of information acquisition, revealing a non-monotonic relationship between consumer surplus and the cost of information acquisition for monopolist. I show that in some markets, allowing the monopolist easier access to customer data can also benefit customers on average. I also analyzed how social welfare reacts to changes in the cost level of information acquisition and showed that the non-monotonicity result is also valid in social welfare analysis. This result can be considered a good caveat for policymakers who focus on market efficiency. 
+                            </p>
+                            <div class="research-stats">
+                                <div class="stat">
+                                    <div class="stat-number">Industrial Organization</div>
+                                    <div class="stat-label">Market Segmentation</div>
+                                </div>
+                                <div class="stat">
+                                    <a href="https://drive.google.com/file/d/1fySTgNhDvil0WhKkJxrhEZAbNO9Yh6oo/view" target="_blank" rel="noopener noreferrer" style="color: #64ffda; text-decoration: none; position: relative; z-index: 100; pointer-events: auto; cursor: pointer;">
+                                        <div class="stat-number">📄</div>
+                                        <div class="stat-label">View Paper</div>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Conference Presentation Information -->
+                            <div class="conference-card">
+                                <div class="pypi-header">
+                                    <span class="conference-badge">🎯 Presented at Conference</span>
+                                    <span style="color: #a0a0a0; font-size: 0.9rem;">Academic Presentation</span>
+                                </div>
+                                <p style="color: #e0e0e0; font-size: 0.9rem; margin-bottom: 10px;">
+                                    <strong>23rd Annual International Industrial Organization Conference (IIOC)</strong>
+                                </p>
+                                <div style="display: flex; gap: 15px; align-items: center;">
+                                    <span style="color: #ffc107; font-weight: 600;">📅 May 2025, Philadelphia</span>
+                                    <span style="color: #a0a0a0; font-size: 0.8rem;">Academic conference presentation</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="research-card scroll-reveal-scale stagger-3">
+                            <h3 class="research-title">📊 Econometrics: Empirical Estimation of Auction</h3>
+                            <p class="research-description">
+                                Created a comprehensive dataset from unstructured 5,000+ single-sale PDF data by implementing Amazon Textract for structured data extraction and integrating the OpenAI API for advanced text processing and classification. Developed and calibrated a structural econometric model analyzing efficiency-policy optimality trade-offs in Washington State timber auctions, quantifying the economic impacts of auction design choices.
+                            </p>
+                            <div class="research-stats">
+                                <div class="stat">
+                                    <div class="stat-number">Econometrics</div>
+                                    <div class="stat-label">Structural Estimation</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">Working</div>
+                                    <div class="stat-label">Paper</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Computer Science Projects Section -->
+                <div>
+                    <h3 class="scroll-reveal stagger-4" style="font-size: 2rem; color: #64ffda; margin-bottom: 30px; text-align: center;">💻 Computer Science Projects</h3>
+                    <div style="display: flex; flex-direction: column; gap: 30px; max-width: 800px; margin: 0 auto;">
+                        <div class="research-card scroll-reveal-scale stagger-5">
+                            <h3 class="research-title">Matching Algorithms</h3>
+                            <p class="research-description">
+                                Developed and published a comprehensive Python package implementing a variety of matching algorithms, including the Deferred Acceptance algorithm, the Boston Mechanism, the Top Trading Cycles (TTC) mechanism, and several linear programming approaches. This open-source library is widely applicable in various domains such as school admissions, job assignments, and resource allocation problems. The package's effectiveness in creating stable and efficient matchings makes it a valuable tool for researchers and practitioners in economics, computer science, and operations research.
+                            </p>
+                            <div class="research-stats">
+                                <div class="stat">
+                                    <div class="stat-number">Market Design</div>
+                                    <div class="stat-label">Algorithm Development</div>
+                                </div>
+                                <div class="stat">
+                                    <a href="https://github.com/Tekdirfan/Matching-Algorithms" target="_blank" rel="noopener noreferrer" style="color: #64ffda; text-decoration: none;">
+                                        <div class="stat-number">📁</div>
+                                        <div class="stat-label">GitHub Code</div>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- PyPI Package Information -->
+                            <div class="pypi-card">
+                                <div class="pypi-header">
+                                    <span class="pypi-badge">📦 Published on PyPI</span>
+                                    <span style="color: #a0a0a0; font-size: 0.9rem;">Python Package</span>
+                                </div>
+                                <p style="color: #e0e0e0; font-size: 0.9rem; margin-bottom: 10px;">
+                                    Install with: <code style="background: rgba(100, 255, 218, 0.1); padding: 2px 6px; border-radius: 4px; color: #64ffda;">pip install matching-algorithms</code>
+                                </p>
+                                <div style="display: flex; gap: 15px; align-items: center;">
+                                    <a href="https://pypi.org/project/matching-algorithms/" target="_blank" rel="noopener noreferrer" class="pypi-link">
+                                        🔗 View on PyPI
+                                    </a>
+                                    <span style="color: #a0a0a0; font-size: 0.8rem;">Available for import and use</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="research-card scroll-reveal-left stagger-6">
+                            <h3 class="research-title">🔤 NLP: Dialogue Segmentation</h3>
+                            <p class="research-description">
+                                In this paper, we delve into the task of classifying
+conversation segment breaks using various Natural
+Language Processing (NLP) models. We leverage
+the rich textual data within the GUIDE dataset to
+identify these transitions. We have worked with
+
+a couple of baseline models alongside some ad-
+vanced models like SpanBERT and RoBERTa to
+
+assess their effectiveness in dialogue segmenta-
+tion. We further experiment with optimization tech-
+niques to refine model performance. This analysis
+
+gives some insights for the future advancements
+in dialogue understanding and the development of
+more sophisticated conversation analysis systems.
+                            </p>
+                            <div class="research-stats">
+                                <div class="stat">
+                                    <div class="stat-number">SpanBERT</div>
+                                    <div class="stat-label">RoBERTa</div>
+                                </div>
+                                <div class="stat">
+                                    <a href="https://drive.google.com/file/d/1wVSXd1u_sncWHtUEBxaUZGg1Ks7U61K_/view?usp=sharing" target="_blank" rel="noopener noreferrer" style="color: #64ffda; text-decoration: none;">
+                                        <div class="stat-number">📄</div>
+                                        <div class="stat-label">View Project</div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="research-card scroll-reveal-right stagger-7">
+                            <h3 class="research-title">🐦 NLP: Election Sentiment Analysis</h3>
+                            <p class="research-description">
+                                Twitter sentiment analysis for election prediction and political opinion mining. Advanced text preprocessing, 
+                                feature engineering, and machine learning models for real-time sentiment tracking during electoral campaigns.
+                            </p>
+                            <div class="research-stats">
+                                <div class="stat">
+                                    <div class="stat-number">Twitter</div>
+                                    <div class="stat-label">API</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">Politics</div>
+                                    <div class="stat-label">Sentiment</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="research-card scroll-reveal-left stagger-8">
+                            <h3 class="research-title">🖼️ Computer Vision: Medical AI</h3>
+                            <p class="research-description">
+                                Developed and optimized a deep learning pipeline for automated breast mass segmentation using a U-Net convolutional neural network (CNN) architecture in PyTorch, leveraging AWS for scalable machine learning workflows and deploying Weights & Biases to systematically monitor and visualize training outputs for precise performance tracking and advanced hyperparameter optimization; achieved a 0.86 Dice coefficient when validating against 12,000 mammogram images, representing a 15% performance improvement over previous approaches.
+                            </p>
+                            <div class="research-stats">
+                                <div class="stat">
+                                    <div class="stat-number">PyTorch</div>
+                                    <div class="stat-label">Deep Learning</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">DICE↑</div>
+                                    <div class="stat-label">Enhanced</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Mobile responsive design -->
+                <style>
+                    @media (max-width: 768px) {
+                        .research-sections-container {
+                            display: block !important;
+                        }
+                        .research-sections-container > div {
+                            margin-bottom: 60px;
+                        }
+                    }
+                </style>
+            </div>
+        </section>
+
+        <section id="skills">
+            <div class="parallax-bg"></div>
+            <div class="container">
+                <h2 class="section-title scroll-reveal">Technical Expertise</h2>
+                <div class="skills-grid">
+                    <div class="skill-card scroll-reveal-left stagger-1">
+                        <div class="skill-name">📊 Econometrics & Industrial Organization</div>
+                        <div class="skill-list">
+                            <div class="skill-item">
+                                <span>Structural Econometric Modeling</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="95"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span>Auction Theory & Market Design</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="92"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span>Industrial Organization</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="88"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="skill-card scroll-reveal stagger-2">
+                        <div class="skill-name">💻 Programming & Development</div>
+                        <div class="skill-list">
+                            <div class="skill-item">
+                                <span>Python (Pandas, NumPy, SciPy, PyTorch)</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="95"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span>R (Statistical Computing & Visualization)</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="90"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span>Package Development & PyPI Publishing</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="85"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="skill-card scroll-reveal-right stagger-3">
+                        <div class="skill-name">🤖 Machine Learning & AI</div>
+                        <div class="skill-list">
+                            <div class="skill-item">
+                                <span>Deep Learning (CNNs, Computer Vision)</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="87"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span>Natural Language Processing (BERT, RoBERTa)</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="85"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span>AWS & Cloud Computing</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="80"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="skill-card scroll-reveal-left stagger-4">
+                        <div class="skill-name">📈 Data Science & Analytics</div>
+                        <div class="skill-list">
+                            <div class="skill-item">
+                                <span>Statistical Inference & Causal Analysis</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="93"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span>Data Mining & Feature Engineering</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="88"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span>Amazon Textract & API Integration</span>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="85"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact section-visible">
+            <div class="parallax-bg"></div>
+            <div class="container">
+                <h2 class="section-title">Get In Touch</h2>
+                <p style="font-size: 1.2rem; color: #a0a0a0; margin-bottom: 40px; text-align: center;">
+                    Open to quantitative research roles in economics, finance and policy analysis.
+                </p>
+                <div class="contact-info">
+                    <a href="mailto:tekdir.irfan@gmail.com" class="contact-item">
+                        <span>📧</span>
+                        <span>tekdir.irfan@gmail.com</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/irfan-tekdir-0118861b5/" class="contact-item" target="_blank" rel="noopener noreferrer">
+                        <span>💼</span>
+                        <span>LinkedIn Profile</span>
+                    </a>
+                    <a href="https://github.com/Tekdirfan" class="contact-item" target="_blank" rel="noopener noreferrer">
+                        <span></span>
+                        <span>GitHub Profile</span>
+                    </a>
+                    <a href="https://econ.la.psu.edu" class="contact-item" target="_blank" rel="noopener noreferrer">
+                        <span>🏛️</span>
+                        <span>Penn State Economics</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Three.js animated background
+        function initParticles() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('particles-canvas'),
+                alpha: true 
+            });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 1000;
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.005,
+                color: 0x64ffda,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+            
+            camera.position.z = 2;
+            
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+                particlesMesh.rotation.x += 0.0005;
+                particlesMesh.rotation.y += 0.0005;
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // Chart.js visualization
+        function initChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            // Quantitative skills demonstration visualization
+            const dataSkillsData = {
+                labels: ['Causal Inference & Econometrics','ML & NLP', 'Game Theory', 'Statistics', 'Python/R', 'Market Design'],
+                datasets: [{
+                    label: 'Skill Proficiency',
+                    data: [95, 90, 88, 95, 97, 93],
+                    backgroundColor: [
+                        'rgba(100, 255, 218, 0.8)',
+                        'rgba(100, 255, 218, 0.7)',
+                        'rgba(100, 255, 218, 0.9)',
+                        'rgba(100, 255, 218, 0.6)',
+                        'rgba(100, 255, 218, 0.75)',
+                        'rgba(100, 255, 218, 0.65)'
+                    ],
+                    borderColor: '#64ffda',
+                    borderWidth: 2
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'radar',
+                data: dataSkillsData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Quantitative Expertise Radar',
+                            color: '#ffffff',
+                            font: { size: 16 }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { 
+                                color: '#a0a0a0',
+                                stepSize: 20
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.2)' },
+                            pointLabels: {
+                                color: '#ffffff',
+                                font: { size: 12 }
+                            }
+                        }
+                    },
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        },
+                        point: {
+                            radius: 6,
+                            backgroundColor: '#64ffda'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Scroll progress indicator
+        function updateScrollProgress() {
+            const scrollProgress = document.querySelector('.scroll-progress');
+            const scrollPx = document.documentElement.scrollTop;
+            const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (scrollPx / winHeightPx) * 100;
+            
+            scrollProgress.style.width = scrolled + '%';
+        }
+
+        // Parallax effects
+        function updateParallax() {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.parallax-bg');
+            
+            parallaxElements.forEach((element, index) => {
+                const speed = 0.5 + (index * 0.1);
+                const yPos = -(scrolled * speed);
+                element.style.transform = `translateY(${yPos}px)`;
+            });
+        }
+
+        // Scroll-triggered animations
+        function initScrollAnimations() {
+            const scrollElements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale');
+            const sections = document.querySelectorAll('section');
+            
+            const elementInView = (el, dividend = 1) => {
+                const elementTop = el.getBoundingClientRect().top;
+                const elementBottom = el.getBoundingClientRect().bottom;
+                
+                return (
+                    elementTop <= ((window.innerHeight || document.documentElement.clientHeight) / dividend) &&
+                    elementBottom >= 0
+                );
+            };
+            
+            const displayScrollElement = (element) => {
+                if (!element.classList.contains('revealed')) {
+                    element.classList.add('revealed');
+                }
+            };
+            
+            const handleScrollAnimation = () => {
+                scrollElements.forEach((el) => {
+                    if (elementInView(el, 1.25)) {
+                        displayScrollElement(el);
+                    }
+                });
+                
+                // Section visibility
+                sections.forEach((section) => {
+                    if (elementInView(section, 2)) {
+                        section.classList.add('section-visible');
+                    }
+                });
+            };
+            
+            // Throttled scroll handler for better performance
+            let ticking = false;
+            function updateOnScroll() {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        handleScrollAnimation();
+                        updateScrollProgress();
+                        updateParallax();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }
+            
+            window.addEventListener('scroll', updateOnScroll);
+            
+            // Initial check
+            setTimeout(handleScrollAnimation, 100);
+        }
+
+        // Skill bar animations
+        function animateSkillBars() {
+            const skillBars = document.querySelectorAll('.skill-progress');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.dataset.width;
+                        setTimeout(() => {
+                            entry.target.style.width = width + '%';
+                        }, 300);
+                    }
+                });
+            }, {
+                threshold: 0.5
+            });
+
+            skillBars.forEach(bar => observer.observe(bar));
+        }
+
+        // Enhanced smooth scrolling with direct function
+        function scrollToSection(sectionId) {
+            const target = document.getElementById(sectionId);
+            if (target) {
+                const navHeight = document.querySelector('nav').offsetHeight;
+                const offsetTop = target.offsetTop - navHeight - 20;
+                
+                window.scrollTo({
+                    top: Math.max(0, offsetTop),
+                    behavior: 'smooth'
+                });
+                
+                // Trigger animations
+                setTimeout(() => {
+                    target.classList.add('section-visible');
+                    const scrollElements = target.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale');
+                    scrollElements.forEach(el => el.classList.add('revealed'));
+                }, 100);
+            }
+        }
+
+        // Enhanced smooth scrolling for remaining links
+        function initSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]:not([onclick])').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    scrollToSection(targetId);
+                });
+            });
+        }
+
+        // Navbar scroll effect
+        function initNavbarScrollEffect() {
+            const nav = document.querySelector('nav');
+            let lastScrollTop = 0;
+            
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    // Scrolling down
+                    nav.style.transform = 'translateY(-100%)';
+                } else {
+                    // Scrolling up
+                    nav.style.transform = 'translateY(0)';
+                }
+                
+                // Add background on scroll
+                if (scrollTop > 50) {
+                    nav.style.background = 'rgba(15, 15, 35, 0.98)';
+                } else {
+                    nav.style.background = 'rgba(15, 15, 35, 0.95)';
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+        }
+
+        // Dynamic floating elements
+        function initDynamicFloating() {
+            const floatingObjects = document.querySelectorAll('.floating-object');
+            const morphingShapes = document.querySelectorAll('.morphing-shape');
+            
+            // Add mouse interaction to floating objects
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+                
+                floatingObjects.forEach((obj, index) => {
+                    const speed = (index + 1) * 0.5;
+                    const offsetX = (mouseX - 0.5) * speed * 20;
+                    const offsetY = (mouseY - 0.5) * speed * 20;
+                    
+                    obj.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+                });
+                
+                morphingShapes.forEach((shape, index) => {
+                    const speed = (index + 1) * 0.3;
+                    const offsetX = (mouseX - 0.5) * speed * 15;
+                    const offsetY = (mouseY - 0.5) * speed * 15;
+                    
+                    shape.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+                });
+            });
+        }
+
+        // Enhanced research card interactions
+        function initResearchCardInteractions() {
+            const researchCards = document.querySelectorAll('.research-card');
+            
+            researchCards.forEach(card => {
+                // Add click to expand functionality
+                card.addEventListener('click', function(e) {
+                    if (e.target.tagName !== 'A') {
+                        this.classList.toggle('expanded');
+                    }
+                });
+                
+                // Add dynamic floating elements to cards
+                card.addEventListener('mouseenter', function() {
+                    // Create temporary floating particles around the card
+                    createCardParticles(this);
+                });
+            });
+        }
+
+        // Create floating particles around cards
+        function createCardParticles(card) {
+            const rect = card.getBoundingClientRect();
+            const particleCount = 5;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'card-particle';
+                particle.style.cssText = `
+                    position: fixed;
+                    width: 4px;
+                    height: 4px;
+                    background: #64ffda;
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 1000;
+                    opacity: 0.8;
+                    left: ${rect.left + Math.random() * rect.width}px;
+                    top: ${rect.top + Math.random() * rect.height}px;
+                    animation: particle-fade 2s ease-out forwards;
+                `;
+                
+                document.body.appendChild(particle);
+                
+                // Remove particle after animation
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 2000);
+            }
+        }
+
+        // Add particle fade animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes particle-fade {
+                0% { 
+                    opacity: 0.8;
+                    transform: translateY(0px) scale(1);
+                }
+                100% { 
+                    opacity: 0;
+                    transform: translateY(-50px) scale(0.5);
+                }
+            }
+            
+            .research-card.expanded .research-description {
+                max-height: 300px !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // PyPI showcase interaction
+        function initPyPIShowcase() {
+            const showcase = document.querySelector('.pypi-showcase');
+            
+            showcase.addEventListener('mouseenter', function() {
+                this.style.animationPlayState = 'paused';
+            });
+            
+            showcase.addEventListener('mouseleave', function() {
+                this.style.animationPlayState = 'running';
+            });
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                initParticles();
+            } catch (e) {
+                console.error('Error initializing particles:', e);
+            }
+            
+            try {
+                initChart();
+            } catch (e) {
+                console.error('Error initializing chart:', e);
+            }
+            
+            try {
+                initScrollAnimations();
+            } catch (e) {
+                console.error('Error initializing scroll animations:', e);
+            }
+            
+            try {
+                animateSkillBars();
+            } catch (e) {
+                console.error('Error initializing skill bars:', e);
+            }
+            
+            try {
+                initSmoothScrolling();
+            } catch (e) {
+                console.error('Error initializing smooth scrolling:', e);
+            }
+            
+            try {
+                initNavbarScrollEffect();
+            } catch (e) {
+                console.error('Error initializing navbar effects:', e);
+            }
+            
+            try {
+                initDynamicFloating();
+            } catch (e) {
+                console.error('Error initializing dynamic floating:', e);
+            }
+            
+            try {
+                initResearchCardInteractions();
+            } catch (e) {
+                console.error('Error initializing research card interactions:', e);
+            }
+            
+            try {
+                initPyPIShowcase();
+            } catch (e) {
+                console.error('Error initializing PyPI showcase:', e);
+            }
+            
+            // Initial progress bar
+            updateScrollProgress();
+        });
+    </script>
+</body>
+</html>
